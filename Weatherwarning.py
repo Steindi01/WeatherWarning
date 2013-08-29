@@ -93,7 +93,7 @@ def get_credentials(path):
 
 args = sys.argv
 if len(args) != 3:
-    print 'USAGE: python Wetterwarnung.py <sleep time> <path to user credentials>'
+    print 'USAGE: python Weatherwarning.py <sleep time> <path to user credentials>'
     exit(1)
 print args
 sleep_time = float(args[1])
