@@ -115,6 +115,7 @@ def send_mail(data, emails, url, sender_mail):
             s = smtplib.SMTP('localhost')
             s.sendmail(sender_mail, receiver, msg.as_string())
             s.quit()
+            print "Sent warning to", receiver
         except Exception, e:
             print "Could not send email to", receiver
             print type(e), e
