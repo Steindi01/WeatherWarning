@@ -158,6 +158,6 @@ while True:
         parser.log_summary(msg, date, tweet, duplicate, tweeted_tweet)
         time.sleep(sleep_time)
     except Exception, e:
-        parser.log_exception(e)
+        parser.log_exception(str(e))
         time.sleep(sleep_time)
         pass
