@@ -42,7 +42,9 @@ class MyHTMLParser(HTMLParser):
                 #print data
 
     def get_data(self):
-        return self.data
+        current_data = self.data
+        self.data = ''
+        return current_data
 
     def short_url(self, url):
         f = urllib2.urlopen("http://tinyurl.com/api-create.php?url=%s" % url)
@@ -82,7 +84,7 @@ class MyHTMLParser(HTMLParser):
 
     def log_exception(self, exception):
         f = open(self.logfile, 'a')
-        f.write(exception)
+        f.write(exception + '\n')
         f.close()
 
 def get_credentials(path):
@@ -111,7 +113,7 @@ if i > 0:
 region = urllib.unquote_plus(region)
 #print region
 
-last_msg = ''
+last_data = ''
 parser = MyHTMLParser()
 
 while True:
@@ -124,6 +126,10 @@ while True:
         d = parser.get_data()
         short_url = parser.short_url(url)
         #print result
+
+        duplicate = False
+        if d == last_data:
+            duplicate = True
         
         api = twitter.Api(consumer_key, consumer_secret, access_token_key, access_token_secret)
 
@@ -136,23 +142,18 @@ while True:
             tweet = True
         
         msg += d
-        if tweet and msg != last_msg:
-            last_msg = msg
+        if tweet and not duplicate:
+            last_data = d
         else:
             tweet = False
             
-
         if (len(msg) + len(short_url)) > 140:
              msg = parser.shorten_message(msg, short_url)
         else:
             msg += short_url
-
-        duplicate = False
-        if msg == last_msg:
-            duplicate = True
         
         tweeted_tweet = []
-        if tweet and msg != last_msg:
+        if tweet and not duplicate:
             tweeted_tweet =  api.PostUpdate(msg)
 
         parser.log_summary(msg, date, tweet, duplicate, tweeted_tweet)
